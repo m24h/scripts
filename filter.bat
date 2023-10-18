@@ -394,6 +394,14 @@ def filter_fir():
 			var_coef.set(','.join(str(x) for x in c))
 		except Exception as e:
 			tk.messagebox.showerror(title='Error', message=e, parent=dlg)
+	def choose_savgol():
+		try:
+			order=int(ctrl_savgol_order.get().strip())
+			win=int(ctrl_savgol_win.get().strip())
+			c = signal.savgol_coeffs(win,order);
+			var_coef.set(','.join(str(x) for x in c))
+		except Exception as e:
+			tk.messagebox.showerror(title='Error', message=e, parent=dlg)
 	def choose_win1b():
 		try:
 			type=('lowpass','highpass','bandpass','bandstop')[ctrl_win1b_type.current()]
@@ -431,7 +439,15 @@ then click 'OK' button. the coefficients are ',' separated, and the Z-domain tra
 	tbl_gen=tk.Frame(dlg)
 	tbl_gen.pack(side='top', fill='x', ipadx=5, ipady=5)
 	irow=0
-	tk.Label(tbl_gen, text='Win 1.a (Kaiser window) : input Freq. (separated by ",") , width and attenuation').grid(columnspan=9, row=irow, column=0, sticky='w')
+	tk.Label(tbl_gen, text='Savitzky-Golay : input window length and poly order').grid(columnspan=9, row=irow, column=0, sticky='w')
+	tk.Label(tbl_gen, anchor='e', text='Win :').grid(row=(irow:=irow+1), column=2, sticky='we')
+	ctrl_savgol_win=tk.Entry(tbl_gen, width=10)
+	ctrl_savgol_win.grid(row=irow, column=3, sticky='w')
+	tk.Label(tbl_gen, anchor='e', text='Order :').grid(row=irow, column=4, sticky='we')
+	ctrl_savgol_order=tk.Entry(tbl_gen, width=10)
+	ctrl_savgol_order.grid(row=irow, column=5, sticky='w')
+	tk.Button(tbl_gen, text="CHOOSE", command=choose_savgol).grid(row=irow, column=8, padx=5, sticky='e')
+	tk.Label(tbl_gen, text='Win 1 (Kaiser window) : input Freq. (separated by ",") , width and attenuation').grid(columnspan=9, row=(irow:=irow+1), column=0, sticky='w')
 	tk.Label(tbl_gen, anchor='w', text='Type :').grid(row=(irow:=irow+1), column=0, sticky='we')
 	ctrl_win1a_type=ttk.Combobox(tbl_gen, justify='left', values=('Low-Pass','High-Pass','Band-Pass','Band-Stop'), state='readonly')
 	ctrl_win1a_type.current(0)
@@ -446,7 +462,7 @@ then click 'OK' button. the coefficients are ',' separated, and the Z-domain tra
 	ctrl_win1a_attenuation=tk.Entry(tbl_gen, width=5, validate='key', validatecommand=(validate_float,'%P'))
 	ctrl_win1a_attenuation.grid(row=irow, column=7, sticky='w')
 	tk.Button(tbl_gen, text="CHOOSE", command=choose_win1a).grid(row=irow, column=8, padx=5, sticky='e')
-	tk.Label(tbl_gen, text='Win 1.b : input Freq. (separated by ",") , order (even num. for other than Low-Pass), window').grid(columnspan=9, row=(irow:=irow+1), column=0, sticky='w')
+	tk.Label(tbl_gen, text='Win 1 : input Freq. (separated by ",") , order (even num. for other than Low-Pass), window').grid(columnspan=9, row=(irow:=irow+1), column=0, sticky='w')
 	tk.Label(tbl_gen, anchor='w', text='Type :').grid(row=(irow:=irow+1), column=0, sticky='we')
 	ctrl_win1b_type=ttk.Combobox(tbl_gen, justify='left', values=('Low-Pass','High-Pass','Band-Pass','Band-Stop'), state='readonly')
 	ctrl_win1b_type.current(0)
