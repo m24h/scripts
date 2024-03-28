@@ -56,7 +56,7 @@ sub init()
 	    }
 	}
 	
-	die "Usage: $0 [-itrd] <old file name to match> <new name to apply>\n rename files use regular express\n i:ignore case\n t:test only\n r:recur subdir\n d:change directory name only\n a:add number when conflicted\n"
+	die "Usage: $0 [-itrda] <old file name to match> <new name to apply>\n rename files use regular express\n -i:ignore case\n -t:test only\n -r:recur subdir\n -d:change directory name only\n -a:add number when conflicted\n"
 		if (!defined($OLD) || !defined($NEW) || $OLD eq "")
 }
 

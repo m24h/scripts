@@ -5,7 +5,7 @@
 #!perl
 use Image::ExifTool qw(:Public);
 
-die "Usage: photoname.pl <dir>\nrename .jpg files to YYYYMMDD-###-where-what [.jpg/tiff/tiff/dng/nef], sub-folders is included\n" if ($#ARGV<0);
+die "Usage: photoname.pl <dir>\nrename .jpg/tiff/tiff/dng/nef files to YYYYMMDD-###-where-what, sub-folders is included\n" if ($#ARGV<0);
 
 sub getfiles($)
 {
