@@ -212,12 +212,6 @@ except Exception as e:
 	exit(1)
 		
 #check files according to the rules
-#If a new file is detected, a new record is generated, and is marked as "NEW". 
-#If a file in records is deleted, the corresponding record is not deleted, but is marked as "DEL". 
-#If modify time or size of a file was changed, the corresponding record is updated, and is marked as "UPD". 
-#If the MD5 digest of a not-damaged file is changed,  the corresponding record is not upadated, but is marked as "BAD".
-#Records of other files are marked as "GUD".
-#record:(check_date, mark, modify_time, MD5, size)
 files=set(records.keys())
 files.update(scanned.keys())
 print('Checking records and files : {0}'.format(len(files)), file=sys.stderr)
