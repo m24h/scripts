@@ -28,7 +28,7 @@ def md5(fname):
 		return md5_err
 
 #record:(check_date, mark, modify_time, size, MD5)
-pattern=re.compile(r'^(\d+)-(\d+)-(\d+)\s+(\w+)\s+(\d+)-(\d+)-(\d+):(\d+):(\d+):(\d+)\.(\d+)\s+(\d+)\s+([0-9A-Fa-f]{32})\s+(.+)$')
+pattern=re.compile(r'^(\d+)-(\d+)-(\d+)\s+(\w+)\s+(\d+)-(\d+)-(\d+):(\d+):(\d+):(\d+)\.(\d+)\s+(\d+)\s+([0-9A-Fa-f\-]{32})\s+(.+)$')
 def record_parse(line):
 	if m:=pattern.match(line) :
 		return (m.group(14), \
