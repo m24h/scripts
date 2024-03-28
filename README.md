@@ -18,7 +18,8 @@ Example: dirchk.bat d:\data\
 Options:\
 &nbsp;&nbsp;-f `<the record file contains MD5 digest>` : defaultly a file named '._dirchk' in the directory is used  if not specified here\
 &nbsp;&nbsp;-o `<the output file contains MD5 digest>` : defaultly using the same file as "-f" specified\
-&nbsp;&nbsp;-d `<days>` : defaultly 30. Not-modified files that have just been checked in the these days are excluded from the MD5 re-calculation\
+&nbsp;&nbsp;-d `<days>` : if specified, Not-modified files that have just been checked in the these days are excluded from the MD5 re-calculation\
+&nbsp;&nbsp;-n `<bytes>` : if specified, MD5 re-calculation are no longer performed when the total bytes of MD5 calculation reaches this value\
 &nbsp;&nbsp;-B : do not backup records when output file name is same as original record file name\
 &nbsp;&nbsp;-P : do not print progress information\
 &nbsp;&nbsp;-x : delete records marked as 'DEL'

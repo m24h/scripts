@@ -13,18 +13,21 @@ import time
 import re
 
 md5_err='-'*32
+md5_total_bytes=0
 def md5(fname):
+	global md5_total_bytes
 	m = hashlib.md5()
 	try:
 		with open(fname,'rb') as f :
 			while d:=f.read(32768) :
 				m.update(d)
+				md5_total_bytes=md5_total_bytes+len(d)
 		return m.hexdigest().upper()
 	except Exception as e:
 		print('{0} : {1}'.format(e, fname), file=sys.stderr)
 		return md5_err
 
-#record:(check_date, mark, modify_time, MD5, size)
+#record:(check_date, mark, modify_time, size, MD5)
 pattern=re.compile(r'^(\d+)-(\d+)-(\d+)\s+(\w+)\s+(\d+)-(\d+)-(\d+):(\d+):(\d+):(\d+)\.(\d+)\s+(\d+)\s+([0-9A-Fa-f]{32})\s+(.+)$')
 def record_parse(line):
 	if m:=pattern.match(line) :
@@ -51,7 +54,7 @@ if __name__ != '__main__':
 	exit(0)
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], 'f:o:d:BPx')
+	opts, args = getopt.getopt(sys.argv[1:], 'f:o:d:n:BPx')
 except Exception as e:
 	print(e, file=sys.stderr)
 	exit(1)
@@ -73,7 +76,8 @@ Example: python {0} d:\\data
 Options:
   -f <the record file contains MD5 digest> : defaultly a file named '._dirchk' in the directory is used  if not specified here
   -o <the output file contains MD5 digest> : defaultly using the same file as "-f" specified
-  -d <days> : defaultly 30. Not-modified files that have just been checked in the these days are excluded from the MD5 re-calculation
+  -d <days> : if specified, Not-modified files that have just been checked in the these days are excluded from the MD5 re-calculation
+  -n <bytes> : if specified, MD5 re-calculation are no longer performed when the total bytes of MD5 calculation reaches this value
   -B : do not backup records when output file name is same as original record file name
   -P : do not print progress information
   -x : delete records marked as 'DEL'\
@@ -96,7 +100,8 @@ elif not os.path.isdir(directory) :
 #get other parameters
 rec_file=os.path.join(directory, '._dirchk')
 out_file=None
-days=30
+days=0
+bytes_limit=-1
 backup=1
 progress=1
 clean=0
@@ -116,6 +121,12 @@ for n, v in opts:
 			days=int(v)
 		except:
 			print('"{0}" is not a number for "-d"'.format(v), file=sys.stderr)
+			exit(1)
+	elif n in ('-n',):
+		try:
+			bytes_limit=int(v)
+		except:
+			print('"{0}" is not a number for "-n"'.format(v), file=sys.stderr)
 			exit(1)
 if not out_file:
 	out_file=rec_file
@@ -216,6 +227,8 @@ files=set(records.keys())
 files.update(scanned.keys())
 print('Checking records and files : {0}'.format(len(files)), file=sys.stderr)
 num=0
+bytes_done=0
+bytes_recalc=0
 t1=time.time()
 for f in sorted(files):
 	if f in records:
@@ -237,7 +250,7 @@ for f in sorted(files):
 					print(record_format(f, (today, 'GUD', rec[2], rec[3], rec[4])), file=out)
 				else:
 					print(record_format(f, rec), file=out)
-			elif days==0 or (days>0 and (today-rec[0]).days>=days):
+			elif (bytes_limit<0 or md5_total_bytes<bytes_limit) and (days==0 or (days>0 and (today-rec[0]).days>=days)):
 				if (m:=md5(f))!=md5_err:
 					if m==rec[4]:
 						print(record_format(f, (today, 'GUD', rec[2], rec[3], rec[4])), file=out)
