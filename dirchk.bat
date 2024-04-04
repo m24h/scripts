@@ -54,7 +54,7 @@ if __name__ != '__main__':
 	exit(0)
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], 'f:o:d:n:BPx')
+	opts, args = getopt.getopt(sys.argv[1:], 'f:o:d:n:BPMx')
 except Exception as e:
 	print(e, file=sys.stderr)
 	exit(1)
@@ -80,6 +80,7 @@ Options:
   -n <bytes> : if specified, MD5 re-calculation are no longer performed when the total bytes of MD5 calculation reaches this value
   -B : do not backup records when output file name is same as original record file name
   -P : do not print progress information
+  -M : ignored microsecond of the file modification time when comparing
   -x : delete records marked as 'DEL'\
 	'''.format(sys.argv[0]), file=sys.stderr)
 	exit(1)
@@ -105,6 +106,7 @@ bytes_limit=-1
 backup=1
 progress=1
 clean=0
+use_microsecond=1
 for n, v in opts:
 	if n in ('-B',):
 		backup=0
@@ -112,6 +114,8 @@ for n, v in opts:
 		progress=0
 	elif n in ('-x',):
 		clean=1
+	elif n in ('-M',):
+		use_microsecond=0
 	elif n in ("-f",): 
 		rec_file=v
 	elif n in ("-o",): 
@@ -236,24 +240,24 @@ for f in sorted(files):
 			sc=scanned[f]
 			if rec[1]=='DEL':
 				print(record_format(f, (today, 'NEW', sc[0], sc[1], md5(f))), file=out)
-			elif rec[2]!=sc[0] or rec[3]!=sc[1]:
+			elif rec[3]!=sc[1] or ((rec[2]!=sc[0]) if use_microsecond else (rec[2].replace(microsecond=0)!=sc[0].replace(microsecond=0))):
 				print(record_format(f, (today, 'UPD', sc[0], sc[1], md5(f))), file=out)
 			elif rec[4]==md5_err:
 				if (m:=md5(f))!=md5_err:
-					print(record_format(f, (today, rec[1], rec[2], rec[3], m)), file=out)
+					print(record_format(f, (today, sc[0], sc[1], rec[3], m)), file=out)
 				else:
 					print(record_format(f, rec), file=out)
 			elif rec[1]=='BAD':
 				if md5(f)==rec[4]:
-					print(record_format(f, (today, 'GUD', rec[2], rec[3], rec[4])), file=out)
+					print(record_format(f, (today, 'GUD', sc[0], sc[1], rec[4])), file=out)
 				else:
 					print(record_format(f, rec), file=out)
 			elif (bytes_limit<0 or md5_total_bytes<bytes_limit) and (days==0 or (days>0 and (today-rec[0]).days>=days)):
 				if (m:=md5(f))!=md5_err:
 					if m==rec[4]:
-						print(record_format(f, (today, 'GUD', rec[2], rec[3], rec[4])), file=out)
+						print(record_format(f, (today, 'GUD', sc[0], sc[1], rec[4])), file=out)
 					else:
-						print(record_format(f, (today, 'BAD', rec[2], rec[3], rec[4])), file=out)
+						print(record_format(f, (today, 'BAD', sc[0], sc[1], rec[4])), file=out)
 						print('File may be damaged : {0}'.format(f), file=sys.stderr)
 				else:
 					print(record_format(f, rec), file=out)
