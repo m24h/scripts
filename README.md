@@ -22,7 +22,7 @@ Options:\
 &nbsp;&nbsp;-n `<bytes>` : if specified, MD5 re-calculation are no longer performed when the total bytes of MD5 calculation reaches this value\
 &nbsp;&nbsp;-B : do not backup records when output file name is same as original record file name\
 &nbsp;&nbsp;-P : do not print progress information\
-&nbsp;&nbsp;-M : ignored microsecond of the file modification time when comparing\
+&nbsp;&nbsp;-M : ignore microsecond of the file modification time when comparing\
 &nbsp;&nbsp;-x : delete records marked as 'DEL'
 
 ## filter.bat

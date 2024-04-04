@@ -80,7 +80,7 @@ Options:
   -n <bytes> : if specified, MD5 re-calculation are no longer performed when the total bytes of MD5 calculation reaches this value
   -B : do not backup records when output file name is same as original record file name
   -P : do not print progress information
-  -M : ignored microsecond of the file modification time when comparing
+  -M : ignore microsecond of the file modification time when comparing
   -x : delete records marked as 'DEL'\
 	'''.format(sys.argv[0]), file=sys.stderr)
 	exit(1)
