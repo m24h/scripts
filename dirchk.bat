@@ -176,7 +176,7 @@ if os.path.exists(rec_file) :
 		print(e)
 		exit(1)
 
-#scan directory, get mtime (or ctime if failed to get mtime)
+#scan directory, get mtime
 scanned=dict()
 print('Scan directory : {0}'.format(directory), file=sys.stderr)
 num=0
@@ -187,8 +187,6 @@ try:
 			f=os.path.join(root, file)
 			st=os.stat(f)
 			t=st.st_mtime
-			if t<0:
-				t=st.st_ctime
 			if t<0:
 				t=0
 			scanned[f]=(datetime.datetime.fromtimestamp(t), st.st_size)
